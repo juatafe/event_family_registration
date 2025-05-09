@@ -4,8 +4,12 @@
         <!-- Modificar el botón de registro existente -->
         <xpath expr="//button[contains(@class, 'a-submit')]" position="replace">
             <button type="button" class="btn btn-primary register-btn"
-                    t-att-data-partner-id="request.env.user.id"
-                    t-att-data-event-id="event.id">Registrar</button>
+                    t-att-data-user-id="request.env.user.id"
+                    t-att-data-partner-id="request.env.user.partner_id.id"
+                    t-att-data-event-id="event.id"
+                    t-att-data-saldo="request.env.user.partner_id.saldo_a_favor"
+                    t-att-data-order-id="order.id if order else ''">
+                    Registrar</button>
         </xpath>
     </template>
 
@@ -22,12 +26,14 @@
                             <t t-esc="ticket.name"/> - <t t-esc="'%.2f €' % ticket.price"/>
                         </label>
                         <div class="col-2">
+                            <t t-set="ticket_qty" t-value="selected_ticket_quantities.get(ticket.id, 0) if selected_ticket_quantities else 0"/>
                             <input type="number"
                                 class="form-control form-control-sm ticket-quantity"
                                 t-att-id="'ticket_' + str(ticket.id) if ticket.id else ''"
                                 t-att-data-ticket-id="ticket.id"
                                 t-att-data-ticket-max="ticket.seats_max"
-                                value="0" min="0"/>
+                                t-att-value="ticket_qty"
+                                min="0"/>
                         </div>
                     </div>
                 </t>
