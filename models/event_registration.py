@@ -8,16 +8,16 @@ class EventRegistration(models.Model):
     ticket_id = fields.Many2one(
         'event.event.ticket',
         string='Ticket del Evento',
-        required=True,
+        required=False,
         ondelete='cascade'
     )
 
     price_total = fields.Float(string="Precio Total", compute="_compute_price_total", store=True)
 
-    payment_status = fields.Selection([
+    payment_status = fields.Selection(selection_add=[
         ('paid', 'Pagado'),
         ('pending', 'Pendiente'),
-    ], string='Estado de Pago', default='pending')
+    ], string='Estat del Pagament', default='pending')
 
     sale_order_id = fields.Many2one('sale.order', string='Orden de Venta')
 
