@@ -21,7 +21,7 @@ class EventRegistration(models.Model):
 
     sale_order_id = fields.Many2one('sale.order', string='Orden de Venta')
 
-    state = fields.Selection([
+    state = fields.Selection(selection_add=[
         ('draft', 'Borrador'),
         ('confirmed', 'Confirmado'),
         ('done', 'Hecho'),
