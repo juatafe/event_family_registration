@@ -14,7 +14,7 @@ class EventRegistration(models.Model):
 
     price_total = fields.Float(string="Precio Total", compute="_compute_price_total", store=True)
 
-    payment_status = fields.Selection(selection_add=[
+    payment_status = fields.Selection([
         ('paid', 'Pagado'),
         ('pending', 'Pendiente'),
     ], string='Estat del Pagament', default='pending')
