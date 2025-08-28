@@ -24,7 +24,7 @@
     'data': [
         'views/event_registration_views.xml',
         'views/event_event_ticket_views.xml',
-        'views/event_event_views.xml',
+        #'views/event_event_views.xml',
         'security/ir.model.access.csv',
         'views/website_event_registration_templates.xml',
         'views/sale_order_mass_cancel.xml',
@@ -33,9 +33,8 @@
         'views/replace_accept_sign_button_in_portal.xml',
         'views/event_mass_payment_view.xml',
         'views/replace_footer_accept_button.xml',
-        
-        
-        
+        #'views/portal_hide_orders.xml',
+
 
     ],
     'test': [

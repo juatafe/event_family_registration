@@ -1,0 +1,15 @@
+<odoo>
+  <!-- Ja tenies este, per a orders -->
+  <!-- <template id="portal_my_orders_hide_flag" inherit_id="sale.portal_my_orders" name="Ocultar orders al portal">
+    <xpath expr="//t[@t-foreach='orders' and @t-as='order']" position="attributes">
+      <attribute name="t-foreach">orders.filtered(lambda o: not o.hide_on_portal)</attribute>
+    </xpath>
+  </template> -->
+
+  <!-- Nou: també per a QUOTATIONS -->
+  <template id="portal_my_quotations_hide_flag" inherit_id="sale.portal_my_quotations" name="Ocultar quotes al portal">
+    <xpath expr="//t[@t-foreach='orders' and @t-as='order']" position="attributes">
+      <attribute name="t-foreach">orders.filtered(lambda o: not o.hide_on_portal)</attribute>
+    </xpath>
+  </template>
+</odoo>

@@ -28,6 +28,12 @@ def calculate_default_ticket_deadline(event_date):
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
+    hide_on_portal = fields.Boolean(
+        string="Ocultar al portal",
+        default=False,
+        help="Si està marcat, aquesta comanda no es mostrarà al portal."
+    )
+
     payment_in_progress = fields.Boolean(
         string="Pagament en marxa",
         help="Es marca com a cert quan l'usuari ha iniciat el procés de pagament per evitar cancel·lacions automàtiques."
@@ -142,6 +148,7 @@ class SaleOrder(models.Model):
                 if order.state != 'cancel':
                     order.write({'state': 'cancel'})
                     _logger.info(f"🛑 Pressupost {order.name} forçat a cancel·lat.")
+                order.write({'hide_on_portal': True}) 
 
                 _logger.info(f"🔍 Estat després de cancel·lar: {order.state}")
 
@@ -157,6 +164,7 @@ class SaleOrder(models.Model):
                 cancel_context = self.env.context.copy()
                 cancel_context['disable_cancel_warning'] = True
                 order.with_context(cancel_context).action_cancel()
+                order.write({'hide_on_portal': True}) 
                 _logger.info(f"Presupost {order.id} cancel·lat exitosament.")
 
                 registrations = self.env['event.registration'].sudo().search([

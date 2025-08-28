@@ -191,7 +191,7 @@ class EventRegistrationController(http.Controller):
             _logger.warning(f"No se pudo encontrar el presupuesto {order_id} para rechazar.")
         
         # Redirigir al cliente de vuelta a la página de pedidos
-        return request.redirect('/my/orders')
+        return request.redirect('/my/quotes')
 
 
     @http.route('/event/<int:event_id>/max_faller_limits', type='json', auth='public')
