@@ -34,6 +34,7 @@
         'views/event_mass_payment_view.xml',
         'views/replace_footer_accept_button.xml',
         #'views/portal_hide_orders.xml',
+        'views/website_event_family_templates.xml',
 
 
     ],

@@ -1,0 +1,10 @@
+<odoo>
+  <template id="portal_event_confirm_button_inherit"
+            inherit_id="website_event.registration_template"
+            name="Injectar event_id per al JS família">
+    <xpath expr="//form" position="before">
+      <t t-set="event_id" t-value="event.id"/>
+      <div id="family_event_info" t-att-data-event-id="event.id"></div>
+    </xpath>
+  </template>
+</odoo>

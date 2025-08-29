@@ -20,10 +20,34 @@ odoo.define('event_family_registration.custom_registration', function (require) 
             var partner_id = $('button.register-btn').data('partner-id');
             var event_id = $('button.register-btn').data('event-id');
 
-            if (partner_id && event_id) {
+            // 🆕 Comprovar reserva familiar immediatament
+            if (event_id) {
+                ajax.jsonRpc('/my/event/check_reservation', 'call', { event_id: event_id })
+                    .then(result => {
+                        if (result.has_reservation) {
+                            let ticketsInfo = result.tickets.map(
+                                t => `${t.product} x${t.qty}`
+                            ).join(", ");
+                            Dialog.confirm(this,
+                                `⚠️ Ja hi ha una reserva familiar feta per <b>${result.partner}</b>: ${ticketsInfo}<br/>Vols substituir-la?`,
+                                {
+                                    confirm_callback: async () => {
+                                        await ajax.jsonRpc("/my/event/replace_reservation", "call", { reservation_id: result.reservation_id });
+                                        Dialog.alert(this, "✅ Reserva substituïda correctament. Ara pots continuar.");
+                                    },
+                                    cancel_callback: () => {
+                                        window.location.href = `/event/${event_id}`;
+                                    }
+                                }
+                            );
+                        }
+                    })
+                    .catch(err => console.error("Error comprovant reserva familiar:", err));
+            }
 
-                // 🔵 PRIMER: Recuperar quantitats ja registrades
-               ajax.jsonRpc('/event/registration_status', 'call', {
+            if (partner_id && event_id) {
+                // 🔵 Recuperar quantitats ja registrades
+                ajax.jsonRpc('/event/registration_status', 'call', {
                     partner_id: partner_id,
                     event_id: event_id
                 }).then(function (response) {
@@ -41,7 +65,6 @@ odoo.define('event_family_registration.custom_registration', function (require) 
                         });
                     }
 
-                    // 🆕 Si hem rebut order_id, el posem en hidden input
                     if (response.order_id) {
                         if ($('input[name="order_id"]').length === 0) {
                             $('form.o_payment_form').append(`<input type="hidden" name="order_id" value="${response.order_id}"/>`);
@@ -51,13 +74,9 @@ odoo.define('event_family_registration.custom_registration', function (require) 
                             console.log("✅ [CUSTOM REGISTRATION] Actualitzat hidden order_id:", response.order_id);
                         }
                     }
-
-                }).catch(function (error) {
-                    console.error("Error obtenint status de registre:", error);
                 });
 
-
-                // 🔵 SEGON: Recuperar limits màxims de família
+                // 🔵 Recuperar límits màxims de família
                 ajax.jsonRpc('/event/' + event_id + '/max_faller_limits', 'call', {
                     partner_id: partner_id
                 }).then(function (limits) {
@@ -75,15 +94,12 @@ odoo.define('event_family_registration.custom_registration', function (require) 
 
                         if (!isNaN(final_max)) {
                             $input.attr('max', final_max);
-                            // Important: no tocar el valor que ja hem posat abans
                             if (parseInt($input.val()) > final_max) {
                                 $input.val(final_max);
                                 console.log(`⚠️ S'ha ajustat a límit ${final_max} el tiquet ${ticket_id}`);
                             }
                         }
                     });
-                }).catch(function (error) {
-                    console.error("Error obtenint límits de tiquets:", error);
                 });
             }
         },
@@ -94,8 +110,7 @@ odoo.define('event_family_registration.custom_registration', function (require) 
             var csrf_token = core.csrf_token;
             var partner_id = $(ev.currentTarget).data('partner-id');
             var event_id = $(ev.currentTarget).data('event-id');
-            var order_id = $('input[name="order_id"]').val();  // 🔥 recuperem order_id
-
+            var order_id = $('input[name="order_id"]').val();
 
             var ticket_quantities = {};
             $('.ticket-quantity').each(function () {
@@ -122,7 +137,6 @@ odoo.define('event_family_registration.custom_registration', function (require) 
                 if (response.status === 'success') {
                     console.log("Registre completat: " + response.message);
                     Dialog.alert(this, "Registre completat.");
-
                     if (response.sale_order_id) {
                         window.location.href = '/my/orders/' + response.sale_order_id;
                     }
